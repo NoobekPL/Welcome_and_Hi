@@ -1,0 +1,63 @@
+Welcome and Hi 1.0
+
+
+"Welcome and Hi" is a script compatible with Skript plugin that works with Bukkit, Tekkit and Spigot servers.
+It requires at least 2.0 Beta 10 version of the Skript plugin.
+
+
+Author: UssCompany
+
+
+Commands:
+  /register <pass> - "registering"
+
+  /login <pass> - "logging"
+
+  /setpass <oldpass> <newpass>
+
+  /admin setpass <player> <newpass>
+
+  /admin register <player> <password>
+
+  /admin lastonline <player>
+
+  /admin lists
+
+  /admin lists registered
+
+  /admin lists logged
+
+
+Permissions:
+  wah.admin.setpass - /admin setpass
+
+  wah.admin.register - /admin register
+
+  wah.admin.lastonline - /admin lastonline
+
+  wah.admin.lists - /admin lists
+
+  wah.list.registered - /admin lists registered
+
+  wah.list.logged - /admin lists logged
+
+  wah.admim.* - everything
+
+  wah.* - everything
+
+  
+Functions:
+
+  Before the player log in (or register), he (or she) cannot chat, destroy blocks, drop items, be attacked, place'em, heal him(or her)self, change his (or her) gamemode, attack other players, and, the most important, cannot execute any commands, exept "welcome" and "hi"
+
+  Kicks a player if isn't logging in (or registering) for 15-20 seconds
+
+  Hashing passes with MD5
+  
+  You can safely change messages and commands
+
+  Session login function that you can safely switch on and off
+
+  You can safely change how many minutes will session login be active
+
+  

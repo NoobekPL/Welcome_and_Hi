@@ -1,0 +1,676 @@
+
+#-----------------------#
+#|                     |#
+#|   Welcome and Hi!   |#
+#|    by UssCompany    |#
+#|     version 1.0     |#
+#|                     |#
+#-----------------------#
+
+#-----------------------#
+#|    Configuration    |#
+#|    Konfiguracja     |#
+#-----------------------#
+
+options:
+
+#---------#
+#|Session|#
+#---------#
+	
+	#---------------------------------------#
+	#|Sessions Enabled Option: (true/false)|#
+	#---------------------------------------#
+	
+	sessions_enabled: false
+	
+	
+	#-----------------------------------------------#
+	#|SessionLogin Time Option: <time> (in minutes)|#
+	#-----------------------------------------------#
+	
+	sessionlogin_time_minutes: 5
+
+
+#----------#
+#|Commands|#
+#----------#
+	
+	#-------------------------#
+	#|Register Command Option|#
+	#-------------------------#
+	
+	registercommand: register
+	
+	
+	#----------------------#
+	#|Login Command Option|#
+	#----------------------#
+	
+	logincommand: login
+	
+	
+	#----------------------------#
+	#|SetPassword Command Option|#
+	#----------------------------#
+	
+	setpasscommand: setpass
+	
+	
+	#-----------------------#
+	#|Admin Commands Option|#
+	#-----------------------#
+	
+	admincommands: admin
+	
+	
+	#---------------------------#
+	#|LastOnline Command Option|#
+	#---------------------------#
+	
+	lastonlinecommand: lastonline
+	
+	
+	#----------------------#
+	#|List Commands Option|#
+	#----------------------#
+	
+	listcommands: lists
+
+
+#----------#
+#|Messages|#
+#----------#
+
+	#-------------------------#
+	#|"Please login!" Message|#
+	#-------------------------#
+	
+	please_login_message: Please login! Usage: /<login command> <password>
+	
+	
+	#------------------------#
+	#|"Login first!" Message|#
+	#------------------------#
+	
+	login_first_message: You have to login first! Usage: /<login command> <password>
+
+
+	#----------------------------#
+	#|"Please register!" Message|#
+	#----------------------------#
+	
+	please_register_message: Please register! Usage: /<register command> <password>
+	
+	
+	#---------------------------#
+	#|"Register first!" Message|#
+	#---------------------------#
+	
+	register_first_message: You have to register first! Usage: /<register command> <password>
+	
+	
+	#---------------------------#
+	#|"just registered" Message|#
+	#---------------------------#
+	
+	just_registered_message: You've just registered!
+	
+	
+	#---------------------#
+	#|"logged in" Message|#
+	#---------------------#
+	
+	loggedin_message: Logged in!
+	
+	
+	#------------------------------#
+	#|"already registered" Message|#
+	#------------------------------#
+	
+	already_registered_message: You've already registered!
+	
+	
+	#-----------------------------#
+	#|"already logged in" Message|#
+	#-----------------------------#
+	
+	already_loggedin_message: You've already logged in!
+	
+	
+	#-------------------------#
+	#|"Bad password!" Message|#
+	#-------------------------#
+	
+	badpass_message: Bad password!
+	
+	
+	#-----------------------------------------#
+	#|"correct setpass command usage" Message|#
+	#-----------------------------------------#
+	
+	correct_setpass_usage_message: Usage: /<setpassword command> <oldpass> <newpass>
+	
+		
+	#--------------------------#
+	#|"Session login!" Message|#
+	#--------------------------#
+	
+	sessionlogin_message: Session login!
+	
+	
+	#----------------------------------#
+	#|"player isnt logged yet" Message|#
+	#----------------------------------#
+	
+	player_isnot_logged_yet_message: The player you're attacking isn't logged yet!
+	
+	
+	#--------------------------#
+	#|"No permission!" Message|#
+	#--------------------------#
+	
+	no_permission_message: No permission!
+	
+	
+	#-----------------------------------------------#
+	#|"correct admin setpass command usage" Message|#
+	#-----------------------------------------------#
+	
+	admin_setpass_usage_message: Correct usage: /<admin command> <setpassword command> <player> <newpass>
+	
+	
+	#------------------------------------------------#
+	#|"correct admin register command usage" Message|#
+	#------------------------------------------------#
+	
+	admin_register_usage_message: Correct usage: /<admin command> <register command> <player> <password>
+	
+	
+	#------------------------------#
+	#|"last online (time)" Message|#
+	#------------------------------#
+	
+	admin_lastonlime_time_message: %arg 2%, last online: {lastonlinetime.%arg 2%}
+	
+	
+	#-----------------------------#
+	#|"last online (now)" Message|#
+	#-----------------------------#
+	
+	admin_lastonline_now_message: %arg 2%, last online: Now
+	
+	
+	#--------------------------------------------#
+	#|"correct lastonline command usage" Message|#
+	#--------------------------------------------#
+	
+	admin_lastonline_usage_message: Correct usage: /<admin command> <lastonline command> <player>
+	
+	
+	#---------------------------#
+	#|"Avalible lists:" Message|#
+	#---------------------------#
+	
+	avalible_lists_message: Avalible lists: registered, logged
+	
+	
+	#-----------------------#
+	#|"Choose list" Message|#
+	#-----------------------#
+	
+	choose_list_message: Please, choose a list!
+	
+	
+
+#-----------------------#
+#|The Whole Skript Code|#
+#-----------------------#
+
+#------------------------------#
+#|  Change at your own risk!  |#
+#------------------------------#
+
+#-----------#
+#|Variables|#
+#-----------#
+
+variables:
+	{password.%player%} = 0
+	{logged.%player%} = false
+	{registered.%player%} = false
+	{session.%player%} = 0
+	{session.active.%player%} = false
+	{ip.%player%} = 0
+	{lastonlinetime.%player%} = 0
+	{online.%player%} = false
+
+
+#----------------------#
+#|On Skript Load Event|#
+#----------------------#
+
+on Skript load:
+	set {wah.session_login} to {@sessions_enabled}
+
+
+#---------------#
+#|On Join Event|#
+#---------------#
+
+on join:
+	if {registered.%player%} is true:
+		if {wah.session_login} is true:
+			if {session.active.%player%} is true:
+				if {ip.%player%} is player's IP:	
+					send "{@sessionlogin_message}"
+					set {session.active.%player%} to false
+					set {session.%player%} to 0
+					set {online.%player%} to true
+					stop
+				else:
+					send "{@please_login_message}"
+					wait 20 real seconds
+					if {logged.%player%} is true:
+						stop
+					else:
+						kick player
+						stop
+			else:
+				send "{@please_login_message}"
+				wait 20 real seconds
+				if {logged.%player%} is true:
+					stop
+				else:
+					kick player
+					stop
+		else:
+			send "{@please_login_message}"
+			wait 20 real seconds
+			if {logged.%player%} is true:
+				stop
+			else:
+				kick player
+				stop
+	else:
+		send "{@please_register_message}"
+		wait 20 real seconds
+		if {registered.%player%} is true:
+			stop
+		else:
+			kick player
+			stop
+
+
+#---------------#
+#|On Quit Event|#
+#---------------#
+
+on quit:
+	if {logged.%player%} is true:
+		set {online.%player%} to false
+		remove player from {logged::*}
+		set {lastonlinetime.%player%} to now
+		if {wah.session_login} is true:
+			set {ip.%player%} to player's IP
+			set {session.active.%player%} to true
+			while {session.%player%} is less than {@sessionlogin_time_minutes}:				
+				wait 1 real minute
+				add 1 to {session.%player%}
+				if {session.%player%} is more than {@sessionlogin_time_minutes}:
+					set {logged.%player%} to false
+					stop
+		else:
+			set {logged.%player%} to false
+	else:
+		stop
+
+
+#---------------#
+#|On Chat Event|#
+#---------------#
+
+on chat:
+	if {registered.%player%} is true:
+		if {logged.%player%} is true:
+			stop
+		else:
+			send "{@login_first_message}" to player
+			cancel event
+			stop
+	if {registered.%player%} is false:
+		send "{@register_first_message}" to player
+		cancel event
+		stop
+
+
+#-----------------#
+#|On Damage Event|#
+#-----------------#
+
+on damage:
+	if attacker is player:
+		if {registered.%attacker%} is true:
+			if {logged.%attacker%} is true:
+				stop
+			else:
+				send "{@login_first_message}"
+				cancel event
+				stop
+		if {registered.%attacker%} is false:
+			send "{@register_first_message}"
+			cancel event
+	if victim is player:
+		if {registered.%victim%} is true:
+			if {logged.%victim%} is true:
+				stop
+			else:
+				send "{@player_isnot_logged_yet_message}" to attacker
+				cancel event
+		else:
+			send "{@player_isnot_logged_yet_message}" to attacker
+			cancel event
+
+
+#-----------------------#
+#|On Block Damage Event|#
+#-----------------------#
+	
+on block damage:
+	if {registered.%player%} is true:
+		if {logged.%player%} is true:
+			stop
+		else:
+			send "{@login_first_message}"
+			cancel event
+			stop
+	if {registered.%player%} is false:
+		send "{@register_first_message}"
+		cancel event
+
+
+#---------------#
+#|On Drop Event|#
+#---------------#
+
+on drop:
+	if {registered.%player%} is true:
+		if {logged.%player%} is true:
+			stop
+		else:
+			send "{@login_first_message}"
+			cancel event
+			stop
+	else:
+		send "{@register_first_message}"
+		cancel event
+
+
+#----------------#
+#|On Place Event|#
+#----------------#
+
+on place:
+	if {registered.%player%} is true:
+		if {logged.%player%} is true:
+			stop
+		else:
+			send "{@login_first_message}"
+			cancel event
+			stop
+	if {registered.%player%} is false:
+		send "{@register_first_message}"
+		cancel event
+		
+on gamemode change:
+	if {registered.%player%} is true:
+		if {logged.%player%} is true:
+			stop
+		else:
+			send "{@login_first_message}"
+			cancel event
+			stop
+	if {registered.%player%} is false:
+		send "{@register_first_message}"
+		cancel event
+
+
+#---------------#
+#|On Heal Event|#
+#---------------#
+
+on heal:
+	if {registered.%player%} is true:
+		if {logged.%player%} is true:
+			stop
+		else:
+			send "{@login_first_message}"
+			cancel event
+			stop
+	if {registered.%player%} is false:
+		send "{@register_first_message}"
+		cancel event
+
+
+#------------------#
+#|On Command Event|#
+#------------------#
+
+on command:
+	if player exists:	
+		if command is not "{@registercommand}" or "{@logincommand}":
+			if {registered.%player%} is true:
+				if {logged.%player%} is true:
+					stop
+				else:
+					send "{@login_first_message}"
+					cancel event
+					stop
+			if {registered.%player%} is false:
+				send "{@register_first_message}"
+				cancel event
+
+
+#------------------#
+#|Register Command|#
+#------------------#
+
+command /{@registercommand} [<text>]:
+	trigger:
+		if arg 1 is set:
+			if {registered.%player%} is true:
+				send "{@already_registered_message}" to player
+				stop trigger
+			else:
+				set {password.%player%} to hashed text-argument
+				set {registered.%player%} to true
+				send "{@just_registered_message}" to player
+				set {online.%player%} to true
+				set {logged.%player%} to true
+				add player to {registered::*}
+				stop trigger
+
+
+#---------------#
+#|Login Command|#
+#---------------#
+
+command /{@logincommand} [<text>]:
+	trigger:
+		if arg 1 is set:
+			if {logged.%player%} is true:
+				send "{@already_loggedin_message}" to player
+				stop trigger
+			else:
+				hashed text-argument is {password.%player%}:
+					send "{@loggedin_message}" to player
+					set {logged.%player%} to true
+					set {online.%player%} to true
+					add player to {logged::*}
+					stop trigger
+				else:
+					send "{@badpass_message}"
+					wait 2 real seconds
+					kick player
+					stop trigger
+
+
+#---------------------#
+#|SetPassword Command|#
+#---------------------#
+
+command /{@setpasscommand} [<text>] [<text>]:
+	trigger:
+		if arg 1 is not set:
+			send "{@correct_setpass_usage_message}"
+			stop trigger
+		else:
+			if arg 2 is not set:
+				send "{@correct_setpass_usage_message}"
+				stop trigger
+			else:
+				hashed arg 1 is {password.%player%}:
+					set {password.%player%} to hashed arg 2
+					send "Pass changed"
+					stop trigger
+				else:
+					send "{@badpass_message}"
+					stop trigger
+
+
+#----------------#
+#|Admin Commands|#
+#----------------#
+				
+command /{@admincommands} [<text>] [<text>] [<text>]:
+	trigger:
+		
+		#---------------------------#
+		#|Admin SetPassword Command|#
+		#---------------------------#
+		
+		if arg 1 is "{@setpasscommand}":
+			if player exists:
+				if player has permissions "wah.admin.setpass" or "wah.admin.*" or "wah.*":
+					if arg 2 is not set:
+						send "{@admin_setpass_usage_message}"
+						stop trigger
+					else:
+						if arg 3 is not set:
+							send "{@admin_setpass_usage_message}"
+							stop trigger
+						else:
+							set {password.%arg 2%} to hashed arg 3
+				else:
+					send "{@no_permission_message}"
+			else:
+				if arg 2 is not set:
+					send "{@admin_setpass_usage_message}"
+					stop trigger
+				else:
+					if arg 3 is not set:
+						send "{@admin_setpass_usage_message}"
+						stop trigger
+					else:
+						set {password.%arg 2%} to hashed arg 3
+
+
+		#------------------------#
+		#|Admin Register Command|#
+		#------------------------#
+		
+		if arg 1 is "{@registercommand}":
+			if player exists:
+				if player has permissions "wah.admin.register" or "wah.admin.*" or "wah.*":
+					if arg 2 is not set:
+						send "{@admin_register_usage_message}"
+						stop trigger
+					else:
+						if arg 3 is not set:
+							send "{@admin_register_usage_message}"
+							stop trigger
+						else:
+							set {password.%arg 2%} to hashed arg 3
+							set {registered.%arg 2%} to true
+							add arg 2 to {registered::*}
+							stop trigger
+				else:
+					send "{@no_permission_message}"
+			else:
+				if arg 2 is not set:
+					send "{@admin_register_usage_message}"
+					stop trigger
+				else:
+					if arg 3 is not set:
+						send "{@admin_register_usage_message}"
+						stop trigger
+					else:
+						set {password.%arg 2%} to hashed arg 3
+						set {registered.%arg 2%} to true
+						add arg 2 to {registered::*}
+						stop trigger
+				
+				
+		#--------------------------#
+		#|Admin LastOnline Command|#
+		#--------------------------#
+		
+		if arg 1 is "{@lastonlinecommand}":
+			if player exists:
+				if player has permissions "wah.admin.lastonline" or "wah.admin.*" or "wah.*":
+					if arg 2 is not set:
+						send "{@admin_lastonline_usage_message}"
+						stop trigger
+					else:
+						if {online.%arg 2%} is true:
+							send "{@admin_lastonline_now_message}"
+							stop trigger
+						else:
+							send "{@admin_lastonlime_time_message}"
+							stop trigger
+				else:
+					send "{@no_permission_message}"
+					stop trigger
+			else:
+				if arg 2 is not set:
+					send "{@admin_lastonline_usage_message}"
+					stop trigger
+				else:
+					if {online.%arg 2%} is true:
+						send "{@admin_lastonline_now_message}"
+						stop trigger
+					else:
+						send "{@admin_lastonlime_time_message}"
+						stop trigger
+		
+		
+		#---------------------#
+		#|Admin List Commands|#
+		#---------------------#
+		
+		if arg 1 is "{@listcommands}":
+			if player exists:
+				if player has permissions "wah.admin.lists" or "wah.admin.lists.*" or "wah.admin.*" or "wah.*":
+					if arg 2 is not set:
+						send "{@avalible_lists_message}"
+						stop trigger
+					if arg 2 is "registered":
+						if player has permissions "wah.list.registered" or "wah.admin.lists.*" or "wah.admin.*" or "wah.*":
+							send "%{registered::*}%"
+						else:
+							send "{@no_permission_message}"
+					if arg 2 is "logged":
+						if player has permissions "wah.list.logged" or "wah.admin.lists.*" or "wah.admin.*" or "wah.*":
+							send "%{logged::*}%"
+						else:
+							send "{@no_permission_message}"
+				else:
+					send "{@no_permission_message}"
+			else:
+				if arg 2 is not set:
+					send "{@avalible_lists_message}"
+					stop trigger
+				if arg 2 is "registered":
+					send "%{registered::*}%"
+				if arg 2 is "logged":
+					send "%{logged::*}%"
