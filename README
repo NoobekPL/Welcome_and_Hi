@@ -1,4 +1,4 @@
-Welcome and Hi 1.0
+Welcome and Hi 1.1
 
 
 "Welcome and Hi" is a script compatible with Skript plugin that works with Bukkit, Tekkit and Spigot servers.
@@ -60,4 +60,18 @@ Functions:
 
   You can safely change how many minutes will session login be active
 
-  
+What's new in 1.1:
+
+  - Added "on rightclick" event
+  - Added "on leftclick" event
+  - Added "on pick up" event
+  - Fixed a little bug with registering
+  - Player cannot move 'til he/she logs in
+  - You can now change the kick time while waiting for register
+  - You can now change the kick time while waiting for login
+  - Server now logs registrations with player's ip and time
+  - Server now logs logins with player's ip and time
+  - Server now logs password sets with player's ip and time
+
+
+This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.  

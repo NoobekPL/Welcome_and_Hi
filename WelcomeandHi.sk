@@ -1,11 +1,18 @@
-
 #-----------------------#
 #|                     |#
 #|   Welcome and Hi!   |#
 #|    by UssCompany    |#
-#|     version 1.0     |#
+#|     version 1.1     |#
 #|                     |#
 #-----------------------#
+
+#-----------------------------------------------------------------------------------------------#
+#|                                           License:                                          |#
+#|                                                                                             |#
+#|This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.|#
+#|    To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.    |#
+#-----------------------------------------------------------------------------------------------#
+
 
 #-----------------------#
 #|    Configuration    |#
@@ -31,7 +38,25 @@ options:
 	
 	sessionlogin_time_minutes: 5
 
+	
+#---------------------#
+#|Logging/Registering|#
+#---------------------#	
 
+	#------------------------------------------------------------------#
+	#|Time after player is beeing kicked if not logged in (in seconds)|#
+	#------------------------------------------------------------------#
+	
+	login_timeout_seconds: 20
+	
+	
+	#-------------------------------------------------------------------#
+	#|Time after player is beeing kicked if not registered (in seconds)|#
+	#-------------------------------------------------------------------#
+	
+	register_timeout_seconds: 30
+	
+	
 #----------#
 #|Commands|#
 #----------#
@@ -242,6 +267,9 @@ variables:
 	{session.%player%} = 0
 	{session.active.%player%} = false
 	{ip.%player%} = 0
+	{registered.ip.%player%} = 0
+	{lastloggedin.ip.%player%} = 0
+	{lastsetpassword.ip.%player%} = 0
 	{lastonlinetime.%player%} = 0
 	{online.%player%} = false
 
@@ -270,33 +298,47 @@ on join:
 					stop
 				else:
 					send "{@please_login_message}"
-					wait 20 real seconds
+					set the player's walk speed to 0
+					wait {@login_timeout_seconds} real seconds
 					if {logged.%player%} is true:
+						set the player's walk speed to 1
 						stop
 					else:
 						kick player
 						stop
 			else:
 				send "{@please_login_message}"
-				wait 20 real seconds
+				set the player's walk speed to 0
+				wait {@login_timeout_seconds} real seconds
 				if {logged.%player%} is true:
+					set the player's walk speed to 1
 					stop
 				else:
 					kick player
 					stop
 		else:
 			send "{@please_login_message}"
-			wait 20 real seconds
+			set the player's walk speed to 0
+			wait {@login_timeout_seconds} real seconds
 			if {logged.%player%} is true:
+				set the player's walk speed to 1
 				stop
 			else:
 				kick player
 				stop
 	else:
 		send "{@please_register_message}"
-		wait 20 real seconds
+		set the player's walk speed to 0
+		wait {@register_timeout_seconds} real seconds
 		if {registered.%player%} is true:
-			stop
+			send "{@please_login_message}"
+			wait {@login_timeout_seconds} real seconds
+			if {logged.%player%} is true:
+				set the player's walk speed to 1
+				stop
+			else:
+				kick player
+				stop
 		else:
 			kick player
 			stop
@@ -451,6 +493,57 @@ on heal:
 		send "{@register_first_message}"
 		cancel event
 
+		
+#--------------------#
+#|On Leftclick Event|#
+#--------------------#
+
+on leftclick:
+	if {registered.%player%} is true:
+		if {logged.%player%} is true:
+			stop
+		else:
+			send "{@login_first_message}"
+			cancel event
+			stop
+	if {registered.%player%} is false:
+		send "{@register_first_message}"
+		cancel event
+
+
+#---------------------#
+#|On Rightclick Event|#
+#---------------------#
+
+on rightclick:
+	if {registered.%player%} is true:
+		if {logged.%player%} is true:
+			stop
+		else:
+			send "{@login_first_message}"
+			cancel event
+			stop
+	if {registered.%player%} is false:
+		send "{@register_first_message}"
+		cancel event
+
+
+#------------------#
+#|On Pick Up Event|#
+#------------------#
+
+on pick up:
+	if {registered.%player%} is true:
+		if {logged.%player%} is true:
+			stop
+		else:
+			send "{@login_first_message}"
+			cancel event
+			stop
+	if {registered.%player%} is false:
+		send "{@register_first_message}"
+		cancel event
+
 
 #------------------#
 #|On Command Event|#
@@ -487,6 +580,8 @@ command /{@registercommand} [<text>]:
 				send "{@just_registered_message}" to player
 				set {online.%player%} to true
 				set {logged.%player%} to true
+				set {registered.ip.%player%} to player's ip
+				log "%player% registered on ip %{registered.ip.%player%}% at %now%" to "registered.log"
 				add player to {registered::*}
 				stop trigger
 
@@ -506,6 +601,8 @@ command /{@logincommand} [<text>]:
 					send "{@loggedin_message}" to player
 					set {logged.%player%} to true
 					set {online.%player%} to true
+					set {lastloggedin.ip.%player%} to player's ip
+					log "%player% logged in on ip %{lastloggedin.ip.%player%}% at %now%" to "logins.log"
 					add player to {logged::*}
 					stop trigger
 				else:
@@ -531,6 +628,8 @@ command /{@setpasscommand} [<text>] [<text>]:
 			else:
 				hashed arg 1 is {password.%player%}:
 					set {password.%player%} to hashed arg 2
+					set {lastsetpassword.ip.%player%} to player's ip
+					log "%player% set his/her password on ip %{lastsetpassword.ip.%player%}% at %now%" to "paswordsets.log"
 					send "Pass changed"
 					stop trigger
 				else:
